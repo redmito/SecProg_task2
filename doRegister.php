@@ -57,4 +57,5 @@ $hash_pass = password_hash($passw, PASSWORD_DEFAULT);
 mysqli_execute_query($link, "INSERT INTO users (username, email, password) VALUES (?, ?, ?) ", [$username, $email, $hash_pass]);
 
 header("Location: ./login.php");
+exit;
 ?>
