@@ -23,6 +23,7 @@ if (strcmp($row['username'], $username) !== 0 || !password_verify($pass, $row['p
     exit;
 }
 
+session_regenerate_id(true);
 $_SESSION['username'] = $username;
 header("Location: ./index.php");
 exit;
