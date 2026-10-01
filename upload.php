@@ -32,6 +32,12 @@
 // 1. Check session for user authentication if not authenticated redirect to login.php
 // 2. If authenticated display the upload form with a file input and a submit button
 // 3. The form should submit to doUpload.php using POST method and enctype="multipart/form-data"
+session_start();
+
+if (!isset($_SESSION['username'])){
+    header("Location: ./login.php");
+    exit;
+}
 ?>
 <body class="d-flex justify-content-center align-items-center vh-100">
     <div class="container d-flex justify-content-center">
@@ -43,7 +49,7 @@
                 </div>
                 <p class="text-white-50 mb-4">Select a file to securely store it in your vault.</p>
                 
-                <form action="list.php" method="POST" enctype="multipart/form-data">
+                <form action="./doUpload.php" method="POST" enctype="multipart/form-data">
                     <div class="mb-4">
                         <label for="fileUpload" class="form-label text-white-50 small mb-1">Choose File</label>
                         <input class="form-control" type="file" id="fileUpload" name="fileUpload" required>
@@ -55,6 +61,11 @@
             </div>
         </div>
     </div>
+    <?php
+        if (isset($_SESSION['error'])){
+            echo $_SESSION['error'] . "<br>";
+        }
+    ?>
     <!-- Bootstrap 5 Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
