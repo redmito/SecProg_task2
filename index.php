@@ -35,6 +35,7 @@ if (!isset($_SESSION["username"])){
                 <div class="d-grid gap-3">
                     <a href="upload.php" class="btn btn-primary btn-lg fw-medium">Upload File</a>
                     <a href="list.php" class="btn btn-outline-secondary text-white btn-lg fw-medium">View Uploads</a>
+                    <a href="doLogout.php" class="btn btn-outline-secondary text-white btn-sm fw-normal">Logout</a>
                 </div>
             </div>
         </div>
