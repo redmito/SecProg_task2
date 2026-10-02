@@ -33,6 +33,12 @@
 // 1. Check session for user authentication if not authenticated redirect to login.php
 // 2. If authenticated display the list of uploaded files in a table format with the following columns: File Name, Size, Date Uploaded, Actions (Download/Delete)
 // 3. makesure just show data from the logged in user
+session_start();
+
+if (!isset($_SESSION["username"])){
+    header("Location: ./login.php");
+    exit;
+}
 ?>
 
 <body class="py-5">
@@ -60,37 +66,26 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- List of uploaded files will be populated here you can delete it after implementing the backend logic -->
-                                    <!-- Dummy Data 1 -->
+                                <?php  
+                                    include_once "./conn_db.php";
+
+                                    $result_user = mysqli_execute_query($link, "SELECT id FROM users WHERE username = ?", [$_SESSION["username"]]);
+                                    $user = mysqli_fetch_assoc($result_user);
+                                    $user_id = $user["id"];
+                                    
+                                    $result_files = mysqli_execute_query($link, "SELECT * FROM files WHERE user_id = ?", [$user_id]);
+                                    $files = mysqli_fetch_all($result_files, MYSQLI_ASSOC);
+                                    foreach ($files as $file) { ?>
                                     <tr>
-                                        <td class="ps-4 py-3 text-white">document_secret.pdf</td>
-                                        <td class="py-3 text-white-50">2.4 MB</td>
-                                        <td class="py-3 text-white-50">Sep 04, 2026</td>
+                                        <td class="ps-4 py-3 text-white"> <?php echo $file["original_name"]?> </td>
+                                        <td class="py-3 text-white-50"> <?php echo round($file["file_size"]/(1024**2), 2)?> MB</td>
+                                        <td class="py-3 text-white-50"><?php echo date("M d, Y", strtotime($file["uploaded_at"])) ?></td>
                                         <td class="text-end pe-4 py-3">
-                                            <a href="#" class="btn btn-sm btn-outline-info me-1">Download</a>
-                                            <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+                                            <a href="./doDownload.php?id=<?php echo $file["id"] ?>" class="btn btn-sm btn-outline-info me-1">Download</a>
+                                            <a href="./doDelete.php?id=<?php echo $file["id"] ?>" class="btn btn-sm btn-outline-danger">Delete</a>
                                         </td>
                                     </tr>
-                                    <!-- Dummy Data 2 -->
-                                    <tr>
-                                        <td class="ps-4 py-3 text-white">image_backup.png</td>
-                                        <td class="py-3 text-white-50">5.1 MB</td>
-                                        <td class="py-3 text-white-50">Sep 02, 2026</td>
-                                        <td class="text-end pe-4 py-3">
-                                            <a href="#" class="btn btn-sm btn-outline-info me-1">Download</a>
-                                            <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
-                                        </td>
-                                    </tr>
-                                    <!-- Dummy Data 3 -->
-                                    <tr>
-                                        <td class="ps-4 py-3 text-white">archive_data.zip</td>
-                                        <td class="py-3 text-white-50">128 MB</td>
-                                        <td class="py-3 text-white-50">Aug 28, 2026</td>
-                                        <td class="text-end pe-4 py-3">
-                                            <a href="#" class="btn btn-sm btn-outline-info me-1">Download</a>
-                                            <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
-                                        </td>
-                                    </tr>
+                                    <?php } ?>
                                 </tbody>
                             </table>
                         </div>
@@ -98,7 +93,11 @@
                 </div>
                 
                 <div class="text-center mt-4">
-                    <p class="text-white-50 small">Showing 3 files in your vault.</p>
+                    <p class="text-white-50 small">Showing 
+                    <?php 
+                        echo count($files);  
+                    ?> 
+                    files in your vault.</p>
                 </div>
             </div>
         </div>
